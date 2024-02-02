@@ -1,5 +1,4 @@
 import * as Yup from "yup"
-
 export const signUpSchema=Yup.object({
     firstName:Yup.string().min(2).max(20).required("Please enter your first name"),
     lastName:Yup.string().min(2).max(20).required("Please enter your last name"),
@@ -8,4 +7,6 @@ export const signUpSchema=Yup.object({
     confirm_password:Yup.string().required().oneOf([Yup.ref('password'),null],"Password must match"),
     age:Yup.string().required("Please select age"),
     gender:Yup.string().required("Please select gender"),
+    comments:Yup.string().min(10).max(20).required("Please enter the comments"),
+    mobileNo:Yup.string().min(10).required("Please enter the mobile number")
 });

@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { signUpSchema } from "./schemas";
+import FormError from "../error/FormError";
 const initialValues = {
   firstName: "",
   lastName: "",
@@ -21,6 +22,8 @@ const initialValues = {
   confirm_password: "",
   age: "",
   gender: "",
+  comments: "",
+  mobileNo: "",
 };
 
 function RegistrationPage() {
@@ -29,6 +32,7 @@ function RegistrationPage() {
       initialValues: initialValues,
       validationSchema: signUpSchema,
       onSubmit: (values) => {
+        console.log(values);
         values;
       },
     });
@@ -59,12 +63,7 @@ function RegistrationPage() {
                 onBlur={handleBlur}
               />
               {errors.firstName && touched.firstName ? (
-                <p
-                  className="form-error"
-                  style={{ color: "red", margin: "0px" }}
-                >
-                  {errors.firstName}
-                </p>
+                <FormError setErr={errors.firstName} />
               ) : null}
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -80,12 +79,7 @@ function RegistrationPage() {
                 onBlur={handleBlur}
               />
               {errors.lastName && touched.lastName ? (
-                <p
-                  className="form-error"
-                  style={{ color: "red", margin: "0px" }}
-                >
-                  {errors.lastName}
-                </p>
+                <FormError setErr={errors.lastName} />
               ) : null}
             </Grid>
             <Grid item xs={12}>
@@ -101,12 +95,7 @@ function RegistrationPage() {
                 onBlur={handleBlur}
               />
               {errors.email && touched.email ? (
-                <p
-                  className="form-error"
-                  style={{ color: "red", margin: "0px" }}
-                >
-                  {errors.email}
-                </p>
+                <FormError setErr={errors.email} />
               ) : null}
             </Grid>
             <Grid item xs={12}>
@@ -122,12 +111,7 @@ function RegistrationPage() {
                 onBlur={handleBlur}
               />
               {errors.password && touched.password ? (
-                <p
-                  className="form-error"
-                  style={{ color: "red", margin: "0px" }}
-                >
-                  {errors.password}
-                </p>
+                <FormError setErr={errors.password} />
               ) : null}
             </Grid>
 
@@ -144,17 +128,12 @@ function RegistrationPage() {
                 onBlur={handleBlur}
               />
               {errors.confirm_password && touched.confirm_password ? (
-                <p
-                  className="form-error"
-                  style={{ color: "red", margin: "0px" }}
-                >
-                  {errors.confirm_password}
-                </p>
+                <FormError setErr={errors.confirm_password} />
               ) : null}
             </Grid>
 
-            <Grid container gap={"10%"} sx={{ ml: "16px", mt: 1 }}>
-              <Grid>
+            <Grid container gap={6} sx={{ ml: "16px", mt: 1 }}>
+              <Box>
                 <FormControl sx={{ minWidth: 180, mt: 2 }} size="large">
                   <InputLabel id="age">Age</InputLabel>
                   <Select
@@ -169,21 +148,16 @@ function RegistrationPage() {
                     <MenuItem value="">
                       <em>None</em>
                     </MenuItem>
-                    <MenuItem value={15}>15</MenuItem>
-                    <MenuItem value={16}>16</MenuItem>
-                    <MenuItem value={16}>17</MenuItem>
+                    <MenuItem value={20}>18-23</MenuItem>
+                    <MenuItem value={25}>23-28</MenuItem>
+                    <MenuItem value={30}>28-33</MenuItem>
                   </Select>
                   {errors.age && touched.age ? (
-                    <p
-                      className="form-error"
-                      style={{ color: "red", margin: "0px" }}
-                    >
-                      {errors.age}
-                    </p>
+                    <FormError setErr={errors.age} />
                   ) : null}
                 </FormControl>
-              </Grid>
-              <Grid>
+              </Box>
+              <Box>
                 <FormControl sx={{ minWidth: 180, mt: 2 }} size="large">
                   <InputLabel id="gender">Gender</InputLabel>
                   <Select
@@ -202,16 +176,42 @@ function RegistrationPage() {
                     <MenuItem value={"Female"}>Female</MenuItem>
                   </Select>
                   {errors.gender && touched.gender ? (
-                    <p
-                      className="form-error"
-                      style={{ color: "red", margin: "0px" }}
-                    >
-                      {errors.gender}
-                    </p>
+                    <FormError setErr={errors.gender} />
                   ) : null}
                 </FormControl>
-              </Grid>
+              </Box>
             </Grid>
+
+            <TextField
+              type="name"
+              autoComplete="off"
+              name="comment"
+              id="comment"
+              label="Enter the comments"
+              fullWidth
+              value={values.comments}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              sx={{ marginTop: 2,ml: "16px" }}
+            />
+            {errors.comments && touched.comments ? (
+              <FormError setErr={errors.comments} />
+            ) : null}
+            <TextField
+              type="name"
+              autoComplete="off"
+              name="mobileNo"
+              id="mobileNo"
+              label="Enter Mobile Number"
+              fullWidth
+              value={values.mobileNo}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              sx={{ marginTop: 2,ml: "16px"}}
+            />
+            {errors.mobileNo && touched.mobileNo ? (
+              <FormError setErr={errors.mobileNo} />
+            ) : null}
 
             <Button
               type="submit"
