@@ -13,13 +13,8 @@ import {
 import { signUpSchema } from "./schemas";
 import FormError from "../error/FormError";
 import { LockOutlined } from "@mui/icons-material";
-import InputComp from "../components/InputComp";
-interface FormField {
-  name: string;
-  label: string;
-  type: string;
-  options?: string[];
-}
+import InputComp from "../components/Select";
+import { FormField, FormValues } from "../components/TypeInterface";
 
 const formFields: FormField[] = [
   { name: "firstName", label: "First Name", type: "name" },
@@ -53,17 +48,6 @@ const formFields: FormField[] = [
   { name: "mobileNo", label: "Mobile Number", type: "name" },
 ];
 
-interface FormValues {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  confirm_password: string;
-  age: string;
-  gender: string;
-  comment: string;
-  mobileNo: string;
-}
 const initialValues: FormValues = {
   firstName: "",
   lastName: "",
