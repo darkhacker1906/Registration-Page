@@ -1,11 +1,12 @@
 import React from "react";
 import RegistrationPage from "./pages/RegistrationPage";
+import { Box } from "@mui/material";
 
 function App() {
   return (
-    <div>
+    <Box >
       <RegistrationPage />
-    </div>
+    </Box>
   );
 }
 export default App;

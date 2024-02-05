@@ -6,9 +6,6 @@ import {
   Button,
   FormControl,
   Grid,
-  InputLabel,
-  MenuItem,
-  Select,
   Stack,
   TextField,
   Typography,
@@ -16,6 +13,7 @@ import {
 import { signUpSchema } from "./schemas";
 import FormError from "../error/FormError";
 import { LockOutlined } from "@mui/icons-material";
+import InputComp from "../components/InputComp";
 interface FormField {
   name: string;
   label: string;
@@ -51,7 +49,7 @@ const formFields: FormField[] = [
     type: "select",
     options: ["Male", "Female"],
   },
-  { name: "comment", label: "Comments", type: "name" },
+  { name: "comment", label: "Comments", type: "textarea" },
   { name: "mobileNo", label: "Mobile Number", type: "name" },
 ];
 
@@ -89,8 +87,8 @@ const RegistrationPage: React.FC = () => {
     });
   return (
     <Stack
-      minWidth={"300px"}
-      maxWidth={"600px"}
+      width={"50%"}
+      minWidth={"290px"}
       sx={{ margin: "auto", marginTop: "30px", p: "15px" }}
     >
       <Box
@@ -107,7 +105,7 @@ const RegistrationPage: React.FC = () => {
         <Typography component="h1" variant="h4">
           Sign up
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+        <FormControl component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
           <Grid container spacing={2}>
             {formFields.map((field) => (
               <Grid
@@ -117,31 +115,27 @@ const RegistrationPage: React.FC = () => {
                 sm={field.type === "select" ? 6 : 12}
               >
                 {field.type === "select" ? (
-                  <FormControl sx={{ minWidth: 180 }}>
-                    <InputLabel id={field.name}>{field.label}</InputLabel>
-                    <Select
-                      name={field.name}
-                      labelId={field.name}
-                      id={field.name}
-                      value={values[field.name]}
-                      label={field.label}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    >
-                      <MenuItem value="">
-                        <em>None</em>
-                      </MenuItem>
-                      {field.options?.map((option) => (
-                        <MenuItem key={option} value={option}>
-                          {option}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
+                  <InputComp
+                    field={field}
+                    values={values}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                  />
+                ) : field.type === "textarea" ? (
+                  <TextField
+                    multiline
+                    rows={2}
+                    name={field.name}
+                    id={field.name}
+                    label={field.label}
+                    fullWidth
+                    value={values[field.name]}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
                 ) : (
                   <TextField
                     type={field.type}
-                    autoComplete="off"
                     name={field.name}
                     id={field.name}
                     label={field.label}
@@ -166,7 +160,7 @@ const RegistrationPage: React.FC = () => {
               Sign Up
             </Button>
           </Grid>
-        </Box>
+        </FormControl>
       </Box>
     </Stack>
   );
