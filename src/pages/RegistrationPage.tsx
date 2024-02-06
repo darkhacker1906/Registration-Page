@@ -19,10 +19,6 @@ import { FormField, FormValues } from "../components/TypeInterface";
 import {
   addDoc,
   collection,
-  doc,
-  getDocs,
-  onSnapshot,
-  updateDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import ButtonDash from "../components/ButtonDash";
@@ -72,31 +68,28 @@ const initialValues: FormValues = {
 };
 
 const RegistrationPage: React.FC = () => {
-  const [inputdata, setInputData] = useState({});
-  useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "forms"), (snapshot) => {
-      setInputData(
-        snapshot.docs.map((doc) => ({
-          id: doc.id,
-          firstName: doc.data().firstName,
-          lastName: doc.data().lastName,
-          email: doc.data().email,
-          age: doc.data().age,
-          gender: doc.data().gender,
-          mobileNo: doc.data().mobileNo,
-        }))
-      );
-    });
-    return () => unsubscribe();
-  }, []);
-
-  const { handleBlur, handleSubmit, handleChange, values, touched, errors } =
+  const { handleBlur, handleSubmit, handleChange, values, touched, errors,resetForm } =
     useFormik({
       initialValues: initialValues,
       validationSchema: signUpSchema,
-      onSubmit: (values) => {
-        console.log(values);
-      },
+      onSubmit: (values,{resetForm}) => {
+        try{
+          addDoc(collection(db,"forms"),{
+            firstName:values.firstName,
+            lastName:values.lastName,
+            email:values.email,
+            age:values.age,
+            gender:values.gender,
+            mobileNo:values.mobileNo,
+          })
+          console.log(values);
+          resetForm();
+        }catch (error) {
+          console.error("Error submitting form:", error);
+        }
+        }
+       
+      
     });
   return (
     <Stack
