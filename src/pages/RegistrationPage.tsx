@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
+import { NavLink } from "react-router-dom";
 import {
   Avatar,
   Box,
@@ -15,6 +16,12 @@ import FormError from "../error/FormError";
 import { LockOutlined } from "@mui/icons-material";
 import InputComp from "../components/Select";
 import { FormField, FormValues } from "../components/TypeInterface";
+import {
+  addDoc,
+  collection,
+} from "firebase/firestore";
+import { db } from "../firebase";
+import ButtonDash from "../components/ButtonDash";
 
 const formFields: FormField[] = [
   { name: "firstName", label: "First Name", type: "name" },
@@ -61,13 +68,28 @@ const initialValues: FormValues = {
 };
 
 const RegistrationPage: React.FC = () => {
-  const { handleBlur, handleSubmit, handleChange, values, touched, errors } =
+  const { handleBlur, handleSubmit, handleChange, values, touched, errors,resetForm } =
     useFormik({
       initialValues: initialValues,
       validationSchema: signUpSchema,
-      onSubmit: (values) => {
-        console.log(values);
-      },
+      onSubmit: (values,{resetForm}) => {
+        try{
+          addDoc(collection(db,"forms"),{
+            firstName:values.firstName,
+            lastName:values.lastName,
+            email:values.email,
+            age:values.age,
+            gender:values.gender,
+            mobileNo:values.mobileNo,
+          })
+          console.log(values);
+          resetForm();
+        }catch (error) {
+          console.error("Error submitting form:", error);
+        }
+        }
+       
+      
     });
   return (
     <Stack
@@ -75,6 +97,9 @@ const RegistrationPage: React.FC = () => {
       minWidth={"290px"}
       sx={{ margin: "auto", marginTop: "30px", p: "15px" }}
     >
+      <NavLink to="/form-table" style={{ textDecoration: "none" }}>
+        <ButtonDash />
+      </NavLink>
       <Box
         sx={{
           display: "flex",
