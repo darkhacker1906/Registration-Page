@@ -11,6 +11,7 @@ function Router() {
         <Route path="/" element={<RegistrationPage />}></Route>
         <Route path="/form-table" element={<FormTable />}></Route>
         <Route path='/form-table/:id' element={<UserData/>}></Route>
+
       </Routes>
     </div>
   );

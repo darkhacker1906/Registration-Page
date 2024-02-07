@@ -9,7 +9,7 @@ import Paper from "@mui/material/Paper";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
 import ClearIcon from "@mui/icons-material/Clear";
-import { Box, Fab } from "@mui/material";
+import { Box, Fab, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditCalendarIcon from "@mui/icons-material/EditCalendar";
 import InfoIcon from "@mui/icons-material/Info";
@@ -19,11 +19,16 @@ export default function FormTable() {
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const [inputData, setInputData] = useState<any>([]);
+  const [selectedData, setSelectedData] = useState<any>({});
   const handleDelete: any = (id: any) => {
     setSelectedId(id);
     setOpen(true);
   };
-  const handleInfo = (id: any) => {};
+  // const handleEdit = async (id:any, firstName:any,lastName:any,email:any,mobileNo:any) => {
+  //   setSelectedData({id, firstName, lastName, email, mobileNo })
+  //   setSelectedId(id);
+  //   setOpen(true)
+  // };
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "forms"), (snapshot) => {
@@ -43,7 +48,7 @@ export default function FormTable() {
   }, []);
   return (
     <>
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} >
         <Box
           sx={{
             display: "flex",
@@ -60,9 +65,9 @@ export default function FormTable() {
         </Box>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
+            <TableRow sx={{background:"#dedcdc"}}>
+              <TableCell><Typography fontWeight={"600"}>Name</Typography></TableCell>
+              <TableCell><Typography fontWeight={"600"}>Email</Typography></TableCell>
               <TableCell align="right"></TableCell>
             </TableRow>
           </TableHead>
@@ -79,15 +84,34 @@ export default function FormTable() {
                 <TableCell align="right">
                   <DeleteIcon
                     onClick={() => handleDelete(data.id)}
-                    sx={{ fontSize: "23px" }}
+                    sx={{
+                      fontSize: "23px",
+                      "&:hover": {
+                        cursor: "pointer",
+                      },
+                    }}
                   />
                   {"  "}
-                  <EditCalendarIcon sx={{ fontSize: "23px" }} />
+                  <NavLink to={`/${data.id}`}>
+                  <EditCalendarIcon
+                    sx={{
+                      fontSize: "23px",
+                      "&:hover": {
+                        cursor: "pointer",
+                      },
+                    }}
+                  />
+                  </NavLink>
+                  
                   {"  "}
                   <NavLink to={`/form-table/${data.id}`}>
                     <InfoIcon
-                      sx={{ fontSize: "23px" }}
-                      onClick={() => handleInfo(data.id)}
+                      sx={{
+                        fontSize: "23px",
+                        "&:hover": {
+                          cursor: "pointer",
+                        },
+                      }}
                     />
                   </NavLink>
                 </TableCell>

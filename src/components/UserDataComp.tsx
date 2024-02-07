@@ -1,15 +1,17 @@
-import { Box, Typography } from '@mui/material'
-import React from 'react'
+import { Box, Stack, Typography } from "@mui/material";
+import React from "react";
 
-function UserDataComp({name,data}) {
+function UserDataComp({ name, data }) {
   return (
     <div>
-     <Box display={"flex"} mt={"10px"} justifyContent={"space-between"}>
-          <Typography variant="h6">{name}</Typography>
+      <Stack direction={"row"} justifyContent={"space-between"}>
+        <Typography variant="h6">{name}</Typography>
+        <Box>
           <Typography variant="h6">{data}</Typography>
         </Box>
+      </Stack>
     </div>
-  )
+  );
 }
 
-export default UserDataComp
+export default UserDataComp;
