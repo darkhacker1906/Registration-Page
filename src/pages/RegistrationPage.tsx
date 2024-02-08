@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {
   Avatar,
   Box,
@@ -19,78 +19,123 @@ import { FormField, FormValues } from "../components/TypeInterface";
 import {
   addDoc,
   collection,
+  doc,
+  getDocs,
+  onSnapshot,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import ButtonDash from "../components/ButtonDash";
-
-const formFields: FormField[] = [
-  { name: "firstName", label: "First Name", type: "name" },
-  { name: "lastName", label: "Last Name", type: "name" },
-  { name: "email", label: "Email", type: "email" },
-  { name: "password", label: "Password", type: "password" },
-  { name: "confirm_password", label: "Confirm Password", type: "password" },
-  {
-    name: "age",
-    label: "Age",
-    type: "select",
-    options: [
-      "18-23",
-      "23-28",
-      "28-33",
-      "33-38",
-      "38-43",
-      "43-48",
-      "48-53",
-      "53-58",
-      "58-60",
-    ],
-  },
-  {
-    name: "gender",
-    label: "Gender",
-    type: "select",
-    options: ["Male", "Female"],
-  },
-  { name: "comment", label: "Comments", type: "textarea" },
-  { name: "mobileNo", label: "Mobile Number", type: "name" },
-];
-
-const initialValues: FormValues = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  password: "",
-  confirm_password: "",
-  age: "",
-  gender: "",
-  comment: "",
-  mobileNo: "",
-};
+import { useLocation } from "react-router-dom";
 
 const RegistrationPage: React.FC = () => {
-  const { handleBlur, handleSubmit, handleChange, values, touched, errors,resetForm } =
-    useFormik({
-      initialValues: initialValues,
-      validationSchema: signUpSchema,
-      onSubmit: (values,{resetForm}) => {
-        try{
-          addDoc(collection(db,"forms"),{
-            firstName:values.firstName,
-            lastName:values.lastName,
-            email:values.email,
-            age:values.age,
-            gender:values.gender,
-            mobileNo:values.mobileNo,
-          })
-          console.log(values);
-          resetForm();
-        }catch (error) {
-          console.error("Error submitting form:", error);
+  const location = useLocation();
+  const { firstName, lastName, email,age,gender, id,mobileNo } = location.state || {};
+  const [data, setData] = useState<any>([]);
+  const formFields: FormField[] = [
+    { name: "firstName", label: "First Name", type: "name", value: firstName || "" },
+    { name: "lastName", label: "Last Name", type: "name", value: lastName || "" },
+    { name: "email", label: "Email", type: "email", value: email || "" },
+    { name: "password", label: "Password", type: "password", value: "" },
+    { name: "confirm_password", label: "Confirm Password", type: "password", value: "" },
+    {
+      name: "age",
+      label: "Age",
+      type: "select",
+      options: [
+        "18-23",
+        "23-28",
+        "28-33",
+        "33-38",
+        "38-43",
+        "43-48",
+        "48-53",
+        "53-58",
+        "58-60",
+      ],
+      value: ""
+    },
+    {
+      name: "gender",
+      label: "Gender",
+      type: "select",
+      options: ["Male", "Female"],
+      value: ""
+    },
+    { name: "comment", label: "Comments", type: "textarea", value: "" },
+    { name: "mobileNo", label: "Mobile Number", type: "name", value: "" },
+  ];
+  const initialValues: FormValues = {
+    firstName: firstName || "",
+    lastName: lastName || "",
+    email: email || "",
+    password: "",
+    confirm_password: "",
+    age: age||"",
+    gender:gender|| "",
+    comment: "",
+    mobileNo:mobileNo|| "",
+  };
+  const {
+    handleBlur,
+    handleSubmit,
+    handleChange,
+    values,
+    touched,
+    errors,
+    resetForm,
+  } = useFormik({
+    initialValues: initialValues,
+    validationSchema: signUpSchema,
+    onSubmit: async(values, { resetForm }) => {
+      try {
+        if (!id) {
+          await addDoc(collection(db, "forms"), {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            password:values.password,
+            confirm_password:values.confirm_password,
+            age: values.age,
+            gender: values.gender,
+            mobileNo: values.mobileNo,
+          });
+        } else {
+          const updatedTodoRef = doc(db, "forms", id);
+          await updateDoc(updatedTodoRef, {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            password:values.password,
+            confirm_password:values.confirm_password,
+            age: values.age,
+            gender: values.gender,
+            mobileNo: values.mobileNo,
+          });
         }
-        }
-       
-      
+        console.log(values);
+        resetForm();
+      } catch (error) {
+        console.error(error);
+      }
+    },
+  });
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, "forms"), (snapshot) => {
+      setData(
+        snapshot.docs.map((doc) => ({
+          id: doc.id,
+          firstName: doc.data().firstName,
+          lastName: doc.data().lastName,
+          email: doc.data().email,
+          age: doc.data().age,
+          gender: doc.data().gender,
+          mobileNo: doc.data().mobileNo,
+        }))
+      );
     });
+    return () => unsubscribe();
+  }, []);
   return (
     <Stack
       width={"50%"}
@@ -160,16 +205,28 @@ const RegistrationPage: React.FC = () => {
                 ) : null}
               </Grid>
             ))}
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2, ml: "16px" }}
-            >
-              Sign Up
-            </Button>
+            {!id ? (
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2, ml: "16px" }}
+              >
+                Sign Up
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2, ml: "16px" }}
+              >
+                Update
+              </Button>
+            )}
           </Grid>
         </FormControl>
+        <NavLink to='/login'>Already a customer Login</NavLink>
       </Box>
     </Stack>
   );
