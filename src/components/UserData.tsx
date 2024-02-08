@@ -18,6 +18,8 @@ function UserData() {
           id: doc.id,
           firstName: doc.data().firstName,
           lastName: doc.data().lastName,
+          password:doc.data().password,
+          confirm_passord:doc.data().password,
           email: doc.data().email,
           age: doc.data().age,
           gender: doc.data().gender,
