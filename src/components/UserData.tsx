@@ -1,83 +1,86 @@
-import { Box, Button, Card, CardActions, CardContent, CardMedia, Fab, Stack, Typography } from "@mui/material";
-import { collection, onSnapshot } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
-import { NavLink, useParams } from "react-router-dom";
-import { db } from "../firebase";
-import ClearIcon from "@mui/icons-material/Clear";
-import UserDataComp from "./UserDataComp";
+import * as React from 'react';
+import Box from '@mui/material/Box';
+import Drawer from '@mui/material/Drawer';
+import CssBaseline from '@mui/material/CssBaseline';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import List from '@mui/material/List';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import MailIcon from '@mui/icons-material/Mail';
+import { Stack } from '@mui/material';
 
-function UserData() {
-  const userId = useParams();
-  const id = userId.id;
-  const [inputdata, setInputdata] = useState<any>([]);
-  const [filteredData, setFilteredData] = useState<any>({});
-  useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "forms"), (snapshot) => {
-      setInputdata(
-        snapshot.docs.map((doc) => ({
-          id: doc.id,
-          firstName: doc.data().firstName,
-          lastName: doc.data().lastName,
-          password:doc.data().password,
-          confirm_passord:doc.data().password,
-          email: doc.data().email,
-          age: doc.data().age,
-          gender: doc.data().gender,
-          mobileNo: doc.data().mobileNo,
-        }))
-      );
-    });
-    return () => unsubscribe();
-  }, []);
+const drawerWidth = 240;
 
-  useEffect(() => {
-    if (id && inputdata.length > 0) {
-      const data = inputdata.find((item: any) => item.id === id);
-      setFilteredData(data);
-    }
-  }, [id, inputdata]);
+export default function UserData() {
   return (
-    <Stack  sx={{background:"#e0e0e0"}}>
-      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <NavLink to={"/form-table"}>
-          <Fab color="error" aria-label="add" size="small">
-            <ClearIcon />
-          </Fab>
-        </NavLink>
-      </Box>
-      <Stack
-        height={"100vh"}
-        display={"flex"}
-        sx={{ alignItems: "center", justifyContent: "center"}}
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <AppBar
+        position="fixed"
+        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
       >
-        <Stack
-          width={"60%"}
-          sx={{ padding: "15px", borderRadius: "10px" }}
-        >
-          <Card sx={{ maxWidth: "70%" }}>
-      <CardContent>
-        <Stack spacing={2}>
-        <Typography variant="h5">User Details</Typography>
-            <Stack direction={"row"} gap={20}>
-            <Typography variant="h6">Username</Typography>
-            <Typography variant="h6" >
-              {filteredData.firstName} {filteredData.lastName}
-            </Typography>
-
-            </Stack>
-                      
-         <Box> <UserDataComp name="Email" data={filteredData.email} />
-          <UserDataComp name="Age" data={filteredData.age} />
-          <UserDataComp name="Gender" data={filteredData.gender} />
-          <UserDataComp name="MobileNo" data={filteredData.mobileNo} />
-          </Box>
-          </Stack >
-      </CardContent>
-    </Card>
-        </Stack>
-      </Stack>
-    </Stack>
+        <Toolbar>
+          <Typography variant="h6" noWrap component="div">
+            User Dashboard
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: drawerWidth,
+            boxSizing: 'border-box',
+          },
+        }}
+        variant="permanent"
+        anchor="left"
+      >
+        <Toolbar />
+        <Divider />
+        <List>
+          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+            <ListItem key={text} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                </ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+        <Divider />
+        <List>
+          {['All mail', 'Trash', 'Spam'].map((text, index) => (
+            <ListItem key={text} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                </ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </Drawer>
+      <Box
+        component="main"
+        sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
+      >
+        <Toolbar />
+       <Stack  height={"80vh"}sx={{background:"rgba(224, 224, 224, 1)",borderRadius:"20px",padding:"20px"}}>
+       <Box></Box>
+       <Box></Box>
+       </Stack>
+      </Box>
+    </Box>
   );
 }
-
-export default UserData;

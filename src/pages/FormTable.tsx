@@ -45,8 +45,6 @@ export default function FormTable() {
     });
     return () => unsubscribe();
   }, []);
-  console.log(inputData);
-  
   return (
     <>
       <TableContainer component={Paper}>
@@ -73,7 +71,9 @@ export default function FormTable() {
               <TableCell>
                 <Typography fontWeight={"600"}>Email</Typography>
               </TableCell>
-              <TableCell align="right"></TableCell>
+              <TableCell align="right">
+              <Typography fontWeight={"600"}>Action</Typography>
+                </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

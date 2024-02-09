@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   Avatar,
   Box,
@@ -29,15 +29,46 @@ import ButtonDash from "../components/ButtonDash";
 import { useLocation } from "react-router-dom";
 
 const RegistrationPage: React.FC = () => {
+  const navigate=useNavigate();
   const location = useLocation();
-  const { firstName, lastName, email,age,gender, id,mobileNo } = location.state || {};
+  let {
+    firstName,
+    lastName,
+    email,
+    age,
+    gender,
+    id,
+    mobileNo,
+    password,
+    confirm_passord,
+  } = location.state || {};
   const [data, setData] = useState<any>([]);
   const formFields: FormField[] = [
-    { name: "firstName", label: "First Name", type: "name", value: firstName || "" },
-    { name: "lastName", label: "Last Name", type: "name", value: lastName || "" },
+    {
+      name: "firstName",
+      label: "First Name",
+      type: "name",
+      value: firstName || "",
+    },
+    {
+      name: "lastName",
+      label: "Last Name",
+      type: "name",
+      value: lastName || "",
+    },
     { name: "email", label: "Email", type: "email", value: email || "" },
-    { name: "password", label: "Password", type: "password", value: "" },
-    { name: "confirm_password", label: "Confirm Password", type: "password", value: "" },
+    {
+      name: "password",
+      label: "Password",
+      type: "password",
+      value: password || "",
+    },
+    {
+      name: "confirm_password",
+      label: "Confirm Password",
+      type: "password",
+      value: confirm_passord || "",
+    },
     {
       name: "age",
       label: "Age",
@@ -53,14 +84,14 @@ const RegistrationPage: React.FC = () => {
         "53-58",
         "58-60",
       ],
-      value: ""
+      value: "",
     },
     {
       name: "gender",
       label: "Gender",
       type: "select",
       options: ["Male", "Female"],
-      value: ""
+      value: "",
     },
     { name: "comment", label: "Comments", type: "textarea", value: "" },
     { name: "mobileNo", label: "Mobile Number", type: "name", value: "" },
@@ -69,13 +100,14 @@ const RegistrationPage: React.FC = () => {
     firstName: firstName || "",
     lastName: lastName || "",
     email: email || "",
-    password: "",
+    password: password || "",
     confirm_password: "",
-    age: age||"",
-    gender:gender|| "",
+    age: age || "",
+    gender: gender || "",
     comment: "",
-    mobileNo:mobileNo|| "",
+    mobileNo: mobileNo || "",
   };
+
   const {
     handleBlur,
     handleSubmit,
@@ -87,15 +119,15 @@ const RegistrationPage: React.FC = () => {
   } = useFormik({
     initialValues: initialValues,
     validationSchema: signUpSchema,
-    onSubmit: async(values, { resetForm }) => {
+    onSubmit: async (values, { resetForm }) => {
       try {
         if (!id) {
           await addDoc(collection(db, "forms"), {
             firstName: values.firstName,
             lastName: values.lastName,
             email: values.email,
-            password:values.password,
-            confirm_password:values.confirm_password,
+            password: values.password,
+            confirm_password: values.confirm_password,
             age: values.age,
             gender: values.gender,
             mobileNo: values.mobileNo,
@@ -106,20 +138,23 @@ const RegistrationPage: React.FC = () => {
             firstName: values.firstName,
             lastName: values.lastName,
             email: values.email,
-            password:values.password,
-            confirm_password:values.confirm_password,
+            password: values.password,
+            confirm_password: values.confirm_password,
             age: values.age,
             gender: values.gender,
             mobileNo: values.mobileNo,
           });
+         
         }
-        console.log(values);
-        resetForm();
+        navigate('/form-table');
       } catch (error) {
         console.error(error);
       }
+      resetForm();
+      
     },
   });
+
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "forms"), (snapshot) => {
       setData(
@@ -127,6 +162,8 @@ const RegistrationPage: React.FC = () => {
           id: doc.id,
           firstName: doc.data().firstName,
           lastName: doc.data().lastName,
+          password: doc.data().password,
+          confirm_passord: doc.data().confirm_passord,
           email: doc.data().email,
           age: doc.data().age,
           gender: doc.data().gender,
@@ -136,6 +173,7 @@ const RegistrationPage: React.FC = () => {
     });
     return () => unsubscribe();
   }, []);
+
   return (
     <Stack
       width={"50%"}
@@ -226,7 +264,7 @@ const RegistrationPage: React.FC = () => {
             )}
           </Grid>
         </FormControl>
-        <NavLink to='/login'>Already a customer Login</NavLink>
+        <NavLink to="/login">Already a customer Login</NavLink>
       </Box>
     </Stack>
   );
