@@ -5,10 +5,8 @@ function UserDataComp({ name, data }) {
   return (
     <div>
       <Stack direction={"row"} justifyContent={"space-between"}>
-        <Typography variant="h6">{name}</Typography>
-        <Box>
-          <Typography variant="h6">{data}</Typography>
-        </Box>
+        <Typography gutterBottom variant="h6" fontWeight={"bold"} component="div">{name}</Typography>
+        <Typography gutterBottom variant="h6">{data}</Typography>
       </Stack>
     </div>
   );

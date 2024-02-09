@@ -25,8 +25,11 @@ export default function FormTable() {
     setOpen(true);
   };
   const handleEdit = (data: any) => {
-    navigate("/", { state: data});
+    navigate("/register", { state: data});
   };
+  const handleInfo=(data)=>{
+    navigate(`/form-table/${data.id}`,{state:data});
+  }
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "forms"), (snapshot) => {
       setInputData(
@@ -108,8 +111,9 @@ export default function FormTable() {
                   />
 
                   {"  "}
-                  <NavLink to={`/form-table/${data.id}`}>
+                  {/* <NavLink to={`/form-table/${data.id}`}> */}
                     <InfoIcon
+                    onClick={()=>handleInfo(data)}
                       sx={{
                         fontSize: "23px",
                         "&:hover": {
@@ -117,7 +121,7 @@ export default function FormTable() {
                         },
                       }}
                     />
-                  </NavLink>
+                  {/* </NavLink> */}
                 </TableCell>
               </TableRow>
             ))}
