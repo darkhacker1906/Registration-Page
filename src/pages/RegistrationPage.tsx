@@ -195,7 +195,7 @@ const RegistrationPage: React.FC = () => {
           <LockOutlined />
         </Avatar>
         <Typography component="h1" variant="h4">
-          Sign up
+        Register
         </Typography>
         <FormControl component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
           <Grid container spacing={2}>
@@ -264,7 +264,7 @@ const RegistrationPage: React.FC = () => {
             )}
           </Grid>
         </FormControl>
-        <NavLink to="/login">Already a customer Login</NavLink>
+        <NavLink to="/">Already a customer Login</NavLink>
       </Box>
     </Stack>
   );
