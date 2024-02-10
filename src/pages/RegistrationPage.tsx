@@ -5,6 +5,7 @@ import {
   Avatar,
   Box,
   Button,
+  CircularProgress,
   FormControl,
   Grid,
   Stack,
@@ -27,9 +28,12 @@ import {
 import { db } from "../firebase";
 import ButtonDash from "../components/ButtonDash";
 import { useLocation } from "react-router-dom";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { firebaseAuth } from "../firebase";
 
 const RegistrationPage: React.FC = () => {
-  const navigate=useNavigate();
+  const [loading,setLoading]=useState(false);
+  const navigate = useNavigate();
   const location = useLocation();
   let {
     firstName,
@@ -120,6 +124,7 @@ const RegistrationPage: React.FC = () => {
     initialValues: initialValues,
     validationSchema: signUpSchema,
     onSubmit: async (values, { resetForm }) => {
+      setLoading(true);
       try {
         if (!id) {
           await addDoc(collection(db, "forms"), {
@@ -144,14 +149,28 @@ const RegistrationPage: React.FC = () => {
             gender: values.gender,
             mobileNo: values.mobileNo,
           });
-         
         }
-        navigate('/form-table');
       } catch (error) {
         console.error(error);
       }
+      setLoading(false);
+      createUserWithEmailAndPassword(
+        firebaseAuth,
+        values.email,
+        values.password
+      )
+        .then((res) => {
+          const user = res.user;
+          console.log(user);
+          updateProfile(user, {
+            displayName: values.firstName,
+          });
+          navigate("/");
+        })
+        .catch((error) => {
+          console.log("Error", error);
+        });
       resetForm();
-      
     },
   });
 
@@ -180,9 +199,6 @@ const RegistrationPage: React.FC = () => {
       minWidth={"290px"}
       sx={{ margin: "auto", marginTop: "30px", p: "15px" }}
     >
-      <NavLink to="/form-table" style={{ textDecoration: "none" }}>
-        <ButtonDash />
-      </NavLink>
       <Box
         sx={{
           display: "flex",
@@ -195,7 +211,7 @@ const RegistrationPage: React.FC = () => {
           <LockOutlined />
         </Avatar>
         <Typography component="h1" variant="h4">
-        Register
+          Register
         </Typography>
         <FormControl component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
           <Grid container spacing={2}>
@@ -262,9 +278,16 @@ const RegistrationPage: React.FC = () => {
                 Update
               </Button>
             )}
+            
           </Grid>
         </FormControl>
         <NavLink to="/">Already a customer Login</NavLink>
+        {
+          loading && <CircularProgress/>
+        }
+         
+
+
       </Box>
     </Stack>
   );
